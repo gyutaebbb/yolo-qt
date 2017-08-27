@@ -7,14 +7,13 @@
 #include <string.h>
 #include <math.h>
 #include "box.h"
-
+ 
 typedef struct {
     int h;
     int w;
     int c;
     float *data;
 } image;
-
 float get_color(int c, int x, int max);
 void flip_image(image a);
 void draw_box(image a, int x1, int y1, int x2, int y2, float r, float g, float b);

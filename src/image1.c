@@ -17,8 +17,7 @@
 
 
 int windows = 0;
-extern IplImage *disp1;
- 
+
 float colors[6][3] = { {1,0,1}, {0,0,1},{0,1,1},{0,1,0},{1,1,0},{1,0,0} };
 
 float get_color(int c, int x, int max)
@@ -413,15 +412,15 @@ void show_image_cv(image p, const char *name)
     //sprintf(buff, "%s (%d)", name, windows);
     sprintf(buff, "%s", name);
 
-    IplImage *disp1 = cvCreateImage(cvSize(p.w,p.h), IPL_DEPTH_8U, p.c);
-    int step = disp1->widthStep;
+    IplImage *disp = cvCreateImage(cvSize(p.w,p.h), IPL_DEPTH_8U, p.c);
+    int step = disp->widthStep;
     cvNamedWindow(buff, CV_WINDOW_NORMAL); 
     //cvMoveWindow(buff, 100*(windows%10) + 200*(windows/10), 100*(windows%10));
     ++windows;
     for(y = 0; y < p.h; ++y){
         for(x = 0; x < p.w; ++x){
             for(k= 0; k < p.c; ++k){
-                disp1->imageData[y*step + x*p.c + k] = (unsigned char)(get_pixel(copy,x,y,k)*255);
+                disp->imageData[y*step + x*p.c + k] = (unsigned char)(get_pixel(copy,x,y,k)*255);
             }
         }
     }
@@ -433,32 +432,32 @@ void show_image_cv(image p, const char *name)
             h = 1000;
             w = h*p.w/p.h;
         }
-        IplImage *buffer = disp1;
-        disp1 = cvCreateImage(cvSize(w, h), buffer->depth, buffer->nChannels);
-        cvResize(buffer, disp1, CV_INTER_LINEAR);
+        IplImage *buffer = disp;
+        disp = cvCreateImage(cvSize(w, h), buffer->depth, buffer->nChannels);
+        cvResize(buffer, disp, CV_INTER_LINEAR);
         cvReleaseImage(&buffer);
     }
-    cvShowImage(buff, disp1);
+    cvShowImage(buff, disp);
 	{
 		CvSize size;
 		{
-			size.width = disp1->width, size.height = disp1->height;
+			size.width = disp->width, size.height = disp->height;
 		}
 
 		static CvVideoWriter* output_video = NULL;    // cv::VideoWriter output_video;
 		if (output_video == NULL)
 		{			printf("\n SRC output_video = %p \n", output_video);
-			const char* output_name = "dectection_output.avi";
+			const char* output_name = "test_dnn_out.avi";
 			//output_video = cvCreateVideoWriter(output_name, CV_FOURCC('H', '2', '6', '4'), 25, size, 1);
 			output_video = cvCreateVideoWriter(output_name, CV_FOURCC('D', 'I', 'V', 'X'), 25, size, 1);
 			//output_video = cvCreateVideoWriter(output_name, CV_FOURCC('M', 'J', 'P', 'G'), 25, size, 1);
 			printf("\n cvCreateVideoWriter, DST output_video = %p  \n", output_video);
 		}
 
-		cvWriteFrame(output_video, disp1);
+		cvWriteFrame(output_video, disp);
 		printf("\n cvWriteFrame \n");
 	}
-    cvReleaseImage(&disp1);
+    cvReleaseImage(&disp);
 }
 #endif
 
